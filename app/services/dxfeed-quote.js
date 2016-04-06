@@ -13,10 +13,6 @@ export default Ember.Service.extend({
       ._dxListen('summary', ['dayOpenPrice', 'dayHighPrice', 'dayLowPrice', 'prevDayClosePrice'])
   },
 
-  createModel (symbol) {
-    return Ember.Object.create({ symbol });
-  },
-
   _quotes: Ember.computed(() => {
     return {};
   }),
@@ -25,17 +21,12 @@ export default Ember.Service.extend({
     // TODO: reference counting?
 
     var quotes = this.get('_quotes');
-    if (!quotes[symbol]) {
-      quotes[symbol] = this.createModel(symbol);
+    var quote = quotes[symbol];
+    if (!quote) {
+      quote = quotes[symbol] = Ember.Object.create({ symbol });
     }
 
-    var quote = quotes[symbol];
-
-    this.get('dxfeed')
-      .subscribeToQuote(symbol)
-      .subscribeToTrade(symbol)
-      .subscribeToSummary(symbol)
-      .subscribeToProfile(symbol);
+    this.get('dxfeed').subscribeToAll(symbol);
 
     return quote;
   },
@@ -45,12 +36,7 @@ export default Ember.Service.extend({
 
     // TODO: reference counting?
     var symbol = quote.get('symbol');
-    this.get('dxfeed')
-      .unsubscribeToQuote(symbol)
-      .unsubscribeToTrade(symbol)
-      .unsubscribeToSummary(symbol)
-      .unsubscribeToProfile(symbol);
-
+    this.get('dxfeed').unsubscribeToAll(symbol);
     quotes[symbol] = null
   },
 
