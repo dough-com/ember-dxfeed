@@ -1,0 +1,22 @@
+<table>
+  <tr>
+    <th>Symbol</th>
+    <th>Bid</th>
+    <th>Ask</th>
+    <th>High</th>
+    <th>Low</th>
+    <th>Close</th>
+    <th>Last</th>
+  </tr>
+  {{#each model as |symbol|}}
+    {{#dx-quote symbol tagName='tr' as |quote|}}
+      <td>{{quote.symbol}}</td>
+      <td>{{quote.bidPrice}}</td>
+      <td>{{quote.askPrice}}</td>
+      <td>{{quote.dayHighPrice}}</td>
+      <td>{{quote.dayLowPrice}}</td>
+      <td>{{quote.prevDayClosePrice}}</td>
+      <td>{{quote.price}}</td>
+    {{/dx-quote}}
+  {{/each}}
+</table>
