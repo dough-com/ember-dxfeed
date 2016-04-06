@@ -1,12 +1,43 @@
-# Ember-dxfeed
+# ember-dxfeed
 
-This README outlines the details of collaborating on this Ember addon.
+Thin wrapper around dxfeed for use in Ember.
 
-## Installation
+## Usage
 
-* `git clone` this repository
-* `npm install`
-* `bower install`
+Command-line:
+
+```bash
+$ ember install git://github.com/dough-com/ember-dxfeed
+$ export DXFEED_URL='http://path.to/qds/cometd'
+```
+
+Code:
+
+```javascript
+const RawApi = Ember.Object.extend({
+  dxfeed: Ember.inject.service(),
+
+  init () {
+    this.get('dxfeed')
+      .subscribeTo('trade', 'AAPL')
+      .on('trade', (dxEvent) => {
+        console.log(dxEvent.price);
+      });
+  }
+});
+
+const QuoteApi = Ember.Object.extend({
+  dxfeedQuote: Ember.inject.service(),
+
+  init () {
+    this.set('quote', this.get('dxfeed').subscribe('SPY'));
+  },
+
+  quotePriceObserver: Ember.observer('quote.price', function () {
+    console.log(this.get('quote.price'));
+  })
+})
+```
 
 ## Running
 
@@ -23,4 +54,4 @@ This README outlines the details of collaborating on this Ember addon.
 
 * `ember build`
 
-For more information on using ember-cli, visit [http://ember-cli.com/](http://ember-cli.com/).
+For more information on using ember-cli, visit [http://www.ember-cli.com/](http://www.ember-cli.com/).

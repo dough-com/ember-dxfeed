@@ -2,5 +2,9 @@
 'use strict';
 
 module.exports = function(/* environment, appConfig */) {
-  return { };
+  return {
+    'ember-dxfeed': {
+      url: process.env.DXFEED_URL
+    }
+  };
 };

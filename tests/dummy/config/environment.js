@@ -12,10 +12,7 @@ module.exports = function(environment) {
         // e.g. 'with-controller': true
       }
     },
-    APP: {},
-    'ember-dxfeed': {
-      url: process.env.DXFEED_URL
-    }
+    APP: {}
   };
 
   if (environment === 'development') {
