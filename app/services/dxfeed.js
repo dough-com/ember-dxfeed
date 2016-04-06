@@ -5,6 +5,10 @@ import ENV from '../config/environment';
 const URL = ENV['ember-dxfeed'].url;
 const ALL_EVENTS = ['trade', 'quote', 'summary', 'profile'];
 
+function flatten (args) {
+  return Ember.isArray(args[0]) ? args[0] : args
+}
+
 export default Ember.Service.extend(Ember.Evented, {
   init () {
     this._super()
@@ -16,10 +20,11 @@ export default Ember.Service.extend(Ember.Evented, {
   }),
 
   subscribeToAll (...symbols) {
-    ALL_EVENTS.forEach((name) => this.subscribeTo(name, symbols))
+    ALL_EVENTS.forEach((name) => this.subscribeTo(name, ...symbols))
+    return this;
   },
 
-  subscribeTo(name, symbols) {
+  subscribeTo(name, ...symbols) {
     var subscriptions = this.get('_subscriptions');
     var subscription = subscriptions[name]
     if (!subscription) {
@@ -27,18 +32,22 @@ export default Ember.Service.extend(Ember.Evented, {
       subscription = subscriptions[name] = this.get('_dxfeed').createSubscription(eventType);
       subscription.onEvent = (data) => this.trigger(name, data);
     }
+
     subscription.addSymbols(...symbols);
+    return this;
   },
 
   unsubscribeToAll(...symbols) {
     ALL_EVENTS.forEach((name) => this.unsubscribeTo(name, symbols))
+    return this;
   },
 
-  unsubscribeTo(name, symbols) {
+  unsubscribeTo(name, ...symbols) {
     var subscriptions = this.get('_subscriptions');
     var subscription = subscriptions[name]
     if (subscription) {
       subscription.removeSymbols(...symbols);
     }
+    return this;
   }
 });
